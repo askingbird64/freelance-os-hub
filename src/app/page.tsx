@@ -47,6 +47,15 @@ const tools = [
     gradient: "from-rose-400 to-orange-600",
     shadow: "shadow-rose-500/20",
     tags: "bg-rose-500/10 text-rose-400 border-rose-500/20"
+  },
+  {
+    id: "smart-renamer",
+    name: "SmartRenamer",
+    desc: "업로드 없이 로컬 브라우저에서 파편화된 파일 이름을 0.1초 만에 1,000개 일괄 자동 수정",
+    icon: "/logo.png",
+    gradient: "from-sky-400 to-blue-600",
+    shadow: "shadow-sky-500/20",
+    tags: "bg-sky-500/10 text-sky-400 border-sky-500/20"
   }
 ];
 
@@ -141,7 +150,7 @@ export default function HubHome() {
       <div className="fixed bottom-0 inset-x-0 bg-indigo-600 text-white py-3 px-6 z-50 transform translate-y-full opacity-0 animate-promo border-t border-indigo-500/50 shadow-[0_-10px_40px_-5px_rgba(79,70,229,0.5)]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm font-bold flex items-center gap-2">⭐ 대기 시간 10초를 영원히 삭제하세요! 100% Ads-Free 프리미엄 출시</p>
-          <button className="px-5 py-2 bg-white text-indigo-600 text-xs font-black rounded-lg hover:bg-slate-100 transition-colors shadow-lg active:scale-95 border border-indigo-200">프리미엄 무제한 이용권 알아보기</button>
+          <Link href="/premium" className="px-5 py-2 bg-white text-indigo-600 text-xs font-black rounded-lg hover:bg-slate-100 transition-colors shadow-lg active:scale-95 border border-indigo-200 whitespace-nowrap">프리미엄 혜택 알아보기</Link>
         </div>
       </div>
 

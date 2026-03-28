@@ -2,8 +2,6 @@
 
 import { useState, useEffect, Suspense, KeyboardEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
-import AdModal from "../../components/AdModal";
-import { Lock } from "lucide-react";
 
 function TimeSyncApp() {
   const searchParams = useSearchParams();
@@ -23,8 +21,6 @@ function TimeSyncApp() {
 
   const [generatedLink, setGeneratedLink] = useState("");
   const [copied, setCopied] = useState(false);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Viewer State
   const [viewerData, setViewerData] = useState<{ title: string, timestamp: number, lang?: 'ko'|'en' } | null>(null);
@@ -102,16 +98,16 @@ function TimeSyncApp() {
     return temp.getTime();
   };
 
-  const handleGenerateClick = () => {
-    if (!title || isNaN(getComputedTimestamp())) return;
-    setIsModalOpen(true);
-  };
-
   const handleGenerate = () => {
-    setIsModalOpen(false);
-    if (!title) return;
+    if (!title) {
+      alert("미팅 제목을 입력해주세요!");
+      return;
+    }
     const ts = getComputedTimestamp();
-    if (isNaN(ts)) return;
+    if (isNaN(ts)) {
+      alert("날짜와 시간을 모두 정확히 입력해주세요!");
+      return;
+    }
 
     const payload = {
       title,
@@ -146,7 +142,7 @@ function TimeSyncApp() {
       
       if (nextId) document.getElementById(nextId)?.focus();
       else if (hour.length === 1) { /* 1글자일땐 시간 토글이 남았으므로 통과옵션 처리할수도있으나 기본적으론 패스 */ }
-      else handleGenerateClick(); 
+      else handleGenerate(); 
     }
   };
 
@@ -339,11 +335,9 @@ function TimeSyncApp() {
 
             <div className="pt-2">
               <button 
-                onClick={handleGenerateClick}
-                disabled={!title || !previewDateObj}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-indigo-500/30 active:scale-95 text-lg flex items-center justify-center gap-2"
+                onClick={handleGenerate}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-indigo-500/30 active:scale-95 text-lg"
               >
-                <Lock className="w-5 h-5 text-indigo-400" />
                 {txt.btnGenerate}
               </button>
             </div>
@@ -378,8 +372,18 @@ function TimeSyncApp() {
           )}
         </div>
 
+        {/* Side Banner Ad Space replacing the AdModal */}
+        <div className="hidden xl:flex flex-col w-64 bg-slate-100 border-2 border-dashed border-slate-300 rounded-3xl p-6 items-center justify-center text-center shadow-inner mt-8 xl:mt-0 xl:absolute xl:right-8 xl:top-1/2 xl:-translate-y-1/2 h-[500px]">
+          <span className="text-[10px] font-black text-slate-400 bg-white px-3 py-1 rounded-full shadow-sm mb-3 uppercase tracking-widest border border-slate-200">
+            Side Ad Space
+          </span>
+          <h4 className="font-bold text-slate-500 text-base mb-2">프리미엄 세로형 배너</h4>
+          <p className="text-slate-400 text-xs font-medium leading-relaxed">
+            마법의 링크 생성툴은 무료로 개방하는 대신, 우측에 세로형 애드센스 광고가 영구적으로 노출됩니다.
+          </p>
+        </div>
+
       </div>
-      <AdModal isOpen={isModalOpen} onComplete={handleGenerate} />
     </div>
   );
 }
