@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     // Vercel(AWS) IP를 타겟으로 한 레딧의 403 스팸 차단을 우회하기 위해 무료 프록시(allorigins) 사용
-    const proxiedUrl = \`https://api.allorigins.win/raw?url=\${encodeURIComponent(url)}\`;
+    const proxiedUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
 
     const response = await fetch(proxiedUrl, {
         headers: {
