@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { ArrowRight, Zap, Shield, Clock, Calculator, Database } from "lucide-react";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "FreelanceOS Hub | 프리랜서 1인 에이전시 필수 생산성 툴킷",
+  description: "호구 방어 이메일, 진짜 단가 계산기, 10초 인보이스, 타임존 자동 변환기 등 프리랜서의 생존과 수익을 극대화하는 6가지 필수 무료 웹 애플리케이션 모음입니다. 서버 가입 없이 브라우저에서 즉시 사용하세요.",
+  keywords: ["프리랜서", "SaaS", "단가 계산기", "생산성 툴", "인보이스 양식", "1인 기업", "재택근무"],
+};
 
 // 프리랜서 OS 코어 툴 5종 리스트업
 const tools = [
