@@ -76,15 +76,7 @@ function TimeSyncApp() {
     }
 
     const today = new Date();
-    if (!year) {
-      setYear(today.getFullYear().toString());
-      setMonth((today.getMonth() + 1).toString());
-      setDay(today.getDate().toString());
-      const h = today.getHours();
-      setHour((h % 12 || 12).toString());
-      setMinute(today.getMinutes().toString().padStart(2, '0'));
-      setAmpm(h >= 12 ? 'PM' : 'AM');
-    }
+    if (!year) setYear(today.getFullYear().toString());
   }, []);
 
   const getComputedTimestamp = () => {
