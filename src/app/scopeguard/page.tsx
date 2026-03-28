@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import AdModal from "../../components/AdModal";
+import { Lock } from "lucide-react";
 
 type Category = 'revision' | 'scope' | 'payment' | 'source' | 'weekend';
 
 export default function ScopeGuard() {
   const [category, setCategory] = useState<Category>('revision');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
   const [pendingCopy, setPendingCopy] = useState<{text: string, type: 'good' | 'bad'} | null>(null);
   
   const [clientName, setClientName] = useState("클라이언트");
@@ -59,6 +61,7 @@ export default function ScopeGuard() {
   };
 
   const executeCopy = (text: string, type: 'good' | 'bad') => {
+    setIsUnlocked(true);
     navigator.clipboard.writeText(text);
     setCopiedType(type);
     setIsModalOpen(false);
@@ -147,10 +150,19 @@ export default function ScopeGuard() {
                   {copiedType === 'good' ? '복사 완료! ✅' : '클립보드 복사'}
                 </button>
               </div>
-              <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 relative">
-                 <p className="whitespace-pre-wrap text-slate-700 leading-loose font-medium text-[15px]">
-                   {templates[category].good}
-                 </p>
+              <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 relative overflow-hidden group">
+                 <div className={`transition-all duration-500 ${!isUnlocked ? 'blur-[8px] select-none opacity-40' : ''}`}>
+                   <p className="whitespace-pre-wrap text-slate-700 leading-loose font-medium text-[15px]">
+                     {templates[category].good}
+                   </p>
+                 </div>
+                 {!isUnlocked && (
+                   <div className="absolute inset-0 flex items-center justify-center z-10 bg-white/10 backdrop-blur-[2px]">
+                     <button onClick={() => { setPendingCopy({text: templates[category].good, type: 'good'}); setIsModalOpen(true); }} className="bg-slate-900 text-white font-black px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 hover:scale-105 transition-transform text-sm">
+                       <Lock className="w-4 h-4 text-emerald-400" /> 10초 대기 후 원문 잠금 해제
+                     </button>
+                   </div>
+                 )}
               </div>
             </div>
           </div>
@@ -175,10 +187,19 @@ export default function ScopeGuard() {
                    {copiedType === 'bad' ? '복사 완료! ✅' : '클립보드 복사'}
                 </button>
               </div>
-              <div className="bg-rose-50/30 p-6 rounded-2xl border border-rose-50 relative">
-                 <p className="whitespace-pre-wrap text-slate-800 leading-loose font-bold text-[15px]">
-                   {templates[category].bad}
-                 </p>
+              <div className="bg-rose-50/30 p-6 rounded-2xl border border-rose-50 relative overflow-hidden group">
+                 <div className={`transition-all duration-500 ${!isUnlocked ? 'blur-[8px] select-none opacity-40' : ''}`}>
+                   <p className="whitespace-pre-wrap text-slate-800 leading-loose font-bold text-[15px]">
+                     {templates[category].bad}
+                   </p>
+                 </div>
+                 {!isUnlocked && (
+                   <div className="absolute inset-0 flex items-center justify-center z-10 bg-white/10 backdrop-blur-[2px]">
+                     <button onClick={() => { setPendingCopy({text: templates[category].bad, type: 'bad'}); setIsModalOpen(true); }} className="bg-slate-900 text-white font-black px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 hover:scale-105 transition-transform text-sm">
+                       <Lock className="w-4 h-4 text-rose-400" /> 10초 대기 후 원문 잠금 해제
+                     </button>
+                   </div>
+                 )}
               </div>
             </div>
           </div>

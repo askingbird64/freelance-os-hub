@@ -2,6 +2,8 @@
 
 import { useState, useEffect, Suspense, KeyboardEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
+import AdModal from "../../components/AdModal";
+import { Lock } from "lucide-react";
 
 function TimeSyncApp() {
   const searchParams = useSearchParams();
@@ -21,6 +23,8 @@ function TimeSyncApp() {
 
   const [generatedLink, setGeneratedLink] = useState("");
   const [copied, setCopied] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Viewer State
   const [viewerData, setViewerData] = useState<{ title: string, timestamp: number, lang?: 'ko'|'en' } | null>(null);
@@ -98,7 +102,13 @@ function TimeSyncApp() {
     return temp.getTime();
   };
 
+  const handleGenerateClick = () => {
+    if (!title || isNaN(getComputedTimestamp())) return;
+    setIsModalOpen(true);
+  };
+
   const handleGenerate = () => {
+    setIsModalOpen(false);
     if (!title) return;
     const ts = getComputedTimestamp();
     if (isNaN(ts)) return;
@@ -136,7 +146,7 @@ function TimeSyncApp() {
       
       if (nextId) document.getElementById(nextId)?.focus();
       else if (hour.length === 1) { /* 1글자일땐 시간 토글이 남았으므로 통과옵션 처리할수도있으나 기본적으론 패스 */ }
-      else handleGenerate(); 
+      else handleGenerateClick(); 
     }
   };
 
@@ -329,10 +339,11 @@ function TimeSyncApp() {
 
             <div className="pt-2">
               <button 
-                onClick={handleGenerate}
+                onClick={handleGenerateClick}
                 disabled={!title || !previewDateObj}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-indigo-500/30 active:scale-95 text-lg"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-indigo-500/30 active:scale-95 text-lg flex items-center justify-center gap-2"
               >
+                <Lock className="w-5 h-5 text-indigo-400" />
                 {txt.btnGenerate}
               </button>
             </div>
@@ -368,6 +379,7 @@ function TimeSyncApp() {
         </div>
 
       </div>
+      <AdModal isOpen={isModalOpen} onComplete={handleGenerate} />
     </div>
   );
 }

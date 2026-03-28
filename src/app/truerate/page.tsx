@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import AdModal from "../../components/AdModal";
+import { Lock } from "lucide-react";
 
 export default function TrueRateMvp() {
   // 1. 재무 목표
@@ -26,6 +28,9 @@ export default function TrueRateMvp() {
   // 진실의 단가
   const trueHourlyRate = Math.ceil(grossIncomeNeeded / billableHours / 1000) * 1000;
   const trueDailyRate = trueHourlyRate * hoursPerDay;
+
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 복사 기능
   const [copied, setCopied] = useState(false);
@@ -166,7 +171,8 @@ export default function TrueRateMvp() {
             {/* Background elements */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/10 blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/4"></div>
 
-            <div className="relative z-10 space-y-12">
+            <div className="relative z-10">
+              <div className={`space-y-12 transition-all duration-700 ${!isUnlocked ? 'blur-[12px] select-none opacity-40 pointer-events-none' : ''}`}>
               
               {/* Gross Goal */}
               <div className="border-b border-white/10 pb-8">
@@ -226,8 +232,24 @@ export default function TrueRateMvp() {
                 {copied ? "클립보드 복사 완료! ✅" : "외주 견적 산정 근거 텍스트로 브리핑 복사하기"}
               </button>
 
+              </div>
+              {!isUnlocked && (
+                  <div className="absolute inset-0 flex items-center justify-center z-20">
+                    <div className="text-center space-y-4 p-8 bg-slate-800/80 backdrop-blur-md rounded-[32px] border border-white/10 shadow-2xl mx-4 w-full max-w-sm">
+                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-500/20 text-rose-500 mb-2">
+                        <Lock className="w-8 h-8" />
+                      </div>
+                      <h4 className="text-xl font-black text-white tracking-tight">당신의 진짜 시급이 계산되었습니다</h4>
+                      <p className="text-slate-400 font-medium text-sm leading-relaxed">충격적인 진실을 마주할 준비가 되셨나요?</p>
+                      <button onClick={() => setIsModalOpen(true)} className="mt-4 w-full bg-rose-500 text-white font-black py-4 rounded-xl shadow-xl shadow-rose-500/20 hover:scale-105 transition-transform text-base flex items-center justify-center gap-2">
+                        10초 광고 보고 결과 확인하기
+                      </button>
+                    </div>
+                  </div>
+              )}
             </div>
           </div>
+          <AdModal isOpen={isModalOpen} onComplete={() => { setIsUnlocked(true); setIsModalOpen(false); }} />
 
         </div>
 

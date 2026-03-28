@@ -5,6 +5,8 @@ import InputPanel from "@/components/InputPanel";
 import DataPanel from "@/components/DataPanel";
 import AnalysisPanel from "@/components/AnalysisPanel";
 import { AppState, RawContent } from "@/types";
+import AdModal from "../../components/AdModal";
+import { Lock } from "lucide-react";
 
 export default function Home() {
   const [state, setState] = useState<AppState>({
@@ -19,7 +21,11 @@ export default function Home() {
     config: null
   });
 
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const runPipeline = async (config: any) => {
+    setIsUnlocked(false);
     setState(s => ({ ...s, status: "CRAWLING", logs: ["Initializing Memory Pipeline..."], rawContents: [], clusters: [], pains: [], exports: [], config }));
 
     try {
@@ -179,9 +185,29 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 w-full overflow-hidden">
           <InputPanel onStart={runPipeline} isRunning={state.status !== "IDLE" && state.status !== "DONE" && state.status !== "ERROR"} />
           <DataPanel state={state} />
-          <AnalysisPanel state={state} />
+
+          <div className="relative h-full flex flex-col min-h-0">
+             <div className={`flex-1 transition-all duration-700 h-full overflow-hidden ${state.status === "DONE" && !isUnlocked ? 'blur-[12px] select-none opacity-40 pointer-events-none' : ''}`}>
+               <AnalysisPanel state={state} />
+             </div>
+             {state.status === "DONE" && !isUnlocked && (
+               <div className="absolute inset-0 flex items-center justify-center z-20">
+                 <div className="bg-slate-900/90 backdrop-blur-xl p-8 rounded-[32px] text-center border border-slate-800 shadow-2xl max-w-sm flex flex-col items-center mx-4">
+                   <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mb-4">
+                     <Lock className="w-8 h-8 text-amber-500" />
+                   </div>
+                   <h3 className="text-2xl font-black text-white mb-2 tracking-tight">분석이 끝났습니다</h3>
+                   <p className="text-slate-400 text-sm font-medium mb-6 leading-relaxed">프리랜서 생존에 필요한 고객의 심층 불만과 해결책 리포트가 완성되었습니다.</p>
+                   <button onClick={() => setIsModalOpen(true)} className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-black px-6 py-4 rounded-xl shadow-xl transition-all w-full flex items-center justify-center gap-2 active:scale-95 text-lg">
+                     10초 대기 후 잠금 해제하기
+                   </button>
+                 </div>
+               </div>
+             )}
+          </div>
         </div>
       </div>
+      <AdModal isOpen={isModalOpen} onComplete={() => { setIsUnlocked(true); setIsModalOpen(false); }} />
     </main>
   );
 }
