@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import AdModal from "../../components/AdModal";
 
 type Category = 'revision' | 'scope' | 'payment' | 'source' | 'weekend';
 
 export default function ScopeGuard() {
   const [category, setCategory] = useState<Category>('revision');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pendingCopy, setPendingCopy] = useState<{text: string, type: 'good' | 'bad'} | null>(null);
   
   const [clientName, setClientName] = useState("클라이언트");
   const [projectName, setProjectName] = useState("프로젝트");
@@ -45,9 +48,20 @@ export default function ScopeGuard() {
     }
   };
 
-  const handleCopy = (text: string, type: 'good' | 'bad') => {
+  const handleCopyClick = (text: string, type: 'good' | 'bad') => {
+    const isPremium = false; // TODO: Check local storage for JWT premium ticket
+    if (isPremium) {
+      executeCopy(text, type);
+    } else {
+      setPendingCopy({ text, type });
+      setIsModalOpen(true);
+    }
+  };
+
+  const executeCopy = (text: string, type: 'good' | 'bad') => {
     navigator.clipboard.writeText(text);
     setCopiedType(type);
+    setIsModalOpen(false);
     setTimeout(() => setCopiedType(null), 2000);
   };
 
@@ -127,7 +141,7 @@ export default function ScopeGuard() {
                   </p>
                 </div>
                 <button 
-                  onClick={() => handleCopy(templates[category].good, 'good')}
+                  onClick={() => handleCopyClick(templates[category].good, 'good')}
                   className={`shrink-0 px-4 py-2 text-sm font-bold rounded-lg transition-all ${copiedType === 'good' ? 'bg-emerald-500 text-white shadow-md' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'}`}
                 >
                   {copiedType === 'good' ? '복사 완료! ✅' : '클립보드 복사'}
@@ -155,7 +169,7 @@ export default function ScopeGuard() {
                   </p>
                 </div>
                 <button 
-                  onClick={() => handleCopy(templates[category].bad, 'bad')}
+                  onClick={() => handleCopyClick(templates[category].bad, 'bad')}
                   className={`shrink-0 px-4 py-2 text-sm font-bold rounded-lg transition-all ${copiedType === 'bad' ? 'bg-rose-500 text-white shadow-md' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'}`}
                 >
                    {copiedType === 'bad' ? '복사 완료! ✅' : '클립보드 복사'}
@@ -172,6 +186,14 @@ export default function ScopeGuard() {
         </div>
 
       </div>
+
+      {/* Global Ad Modal for Freemium Friction */}
+      <AdModal 
+        isOpen={isModalOpen} 
+        onComplete={() => {
+          if (pendingCopy) executeCopy(pendingCopy.text, pendingCopy.type);
+        }} 
+      />
     </div>
   );
 }

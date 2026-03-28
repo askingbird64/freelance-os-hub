@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import AdModal from "../../components/AdModal";
 
 interface InvoiceItem {
   id: string;
@@ -10,6 +11,8 @@ interface InvoiceItem {
 }
 
 export default function QuickBill() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Sender Details
   const [senderName, setSenderName] = useState("프리랜서 김토끼");
   const [senderEmail, setSenderEmail] = useState("tokki@freelance.com");
@@ -53,8 +56,18 @@ export default function QuickBill() {
   const taxAmount = Math.floor(subtotal * (taxRate / 100));
   const total = subtotal + taxAmount;
 
+  const handlePrintClick = () => {
+    const isPremium = false; // TODO: Check local storage for JWT premium ticket
+    if (isPremium) {
+      handlePrint();
+    } else {
+      setIsModalOpen(true);
+    }
+  };
+
   const handlePrint = () => {
-    window.print();
+    setIsModalOpen(false);
+    setTimeout(() => window.print(), 300);
   };
 
   return (
@@ -73,7 +86,7 @@ export default function QuickBill() {
           <p className="text-slate-400 text-sm font-medium mt-1">10초 완성 무상태(Stateless) PDF 인보이스</p>
           
           <button 
-            onClick={handlePrint}
+            onClick={handlePrintClick}
             className="w-full mt-6 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black py-4 rounded-xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
@@ -258,6 +271,7 @@ export default function QuickBill() {
 
       </div>
 
+      <AdModal isOpen={isModalOpen} onComplete={handlePrint} />
     </div>
   );
 }
