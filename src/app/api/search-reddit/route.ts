@@ -12,11 +12,15 @@ export async function POST(req: Request) {
        url = `https://www.reddit.com/r/${subreddits[0]}/search.json?q=${encodeURIComponent(mainKeyword)}&restrict_sr=1&limit=${maxPosts}`;
     }
 
-    const response = await fetch(url, {
+    // Vercel(AWS) IP를 타겟으로 한 레딧의 403 스팸 차단을 우회하기 위해 무료 프록시(allorigins) 사용
+    const proxiedUrl = \`https://api.allorigins.win/raw?url=\${encodeURIComponent(url)}\`;
+
+    const response = await fetch(proxiedUrl, {
         headers: {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
             "Accept": "application/json"
-        }
+        },
+        cache: 'no-store'
     });
 
     if (!response.ok) {
