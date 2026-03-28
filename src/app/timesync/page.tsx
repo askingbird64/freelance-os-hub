@@ -110,7 +110,7 @@ function TimeSyncApp() {
     };
 
     const encoded = btoa(JSON.stringify(payload));
-    const link = `${window.location.origin}/?d=${encoded}`;
+    const link = `${window.location.origin}/timesync?d=${encoded}`;
     setGeneratedLink(link);
   };
 
